@@ -152,6 +152,7 @@ endif()
 if(SPV_BUILD_SAMPLE)
 	add_subdirectory(Sample)
 endif()
+add_subdirectory(main)
 
 if(UNIX AND NOT BUILD_SHARED_LIBS)
 	unset(ALL_LIBRARIES)
@@ -229,4 +230,3 @@ endif()
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Data DESTINATION .)
 install(FILES ${INSTALL_HEADER_FILES} DESTINATION include)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/Interface/nlohmann/json.hpp DESTINATION include/nlohmann)
-

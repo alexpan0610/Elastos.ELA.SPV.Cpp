@@ -5,10 +5,10 @@
 #ifndef __ELASTOS_SDK_ACCOUNT_H__
 #define __ELASTOS_SDK_ACCOUNT_H__
 
-#include <SDK/WalletCore/BIPs/Mnemonic.h>
 #include <SDK/Common/Mstream.h>
-#include <SDK/WalletCore/BIPs/Address.h>
 #include <SDK/SpvService/LocalStore.h>
+#include <SDK/WalletCore/BIPs/Address.h>
+#include <SDK/WalletCore/BIPs/Mnemonic.h>
 
 #include <nlohmann/json.hpp>
 
@@ -25,6 +25,8 @@ namespace Elastos {
 			};
 
 		public:
+			Account() {}
+
 			// for test
 			Account(const LocalStorePtr &store);
 
@@ -54,79 +56,80 @@ namespace Elastos {
 			// keystore
 			Account(const std::string &path, const KeyStore &ks, const std::string &payPasswd);
 
-			bytes_t RequestPubKey() const;
+			virtual bytes_t RequestPubKey() const;
 
-			Key RequestPrivKey(const std::string &payPassword) const;
+			virtual Key RequestPrivKey(const std::string &payPassword) const;
 
-			HDKeychainPtr RootKey(const std::string &payPassword) const;
+			virtual HDKeychainPtr RootKey(const std::string &payPassword) const;
 
-			HDKeychainPtr MasterPubKey() const;
+			virtual HDKeychainPtr MasterPubKey() const;
 
-			std::string GetxPrvKeyString(const std::string &payPasswd) const;
+			virtual std::string GetxPrvKeyString(const std::string &payPasswd) const;
 
-			const std::string &MasterPubKeyString() const;
+			virtual const std::string &MasterPubKeyString() const;
 
-			const std::string &MasterPubKeyHDPMString() const;
+			virtual const std::string &MasterPubKeyHDPMString() const;
 
-			const std::vector<PublicKeyRing> &MasterPubKeyRing() const;
+			virtual const std::vector<PublicKeyRing> &MasterPubKeyRing() const;
 
-			bytes_t OwnerPubKey() const;
+			virtual bytes_t OwnerPubKey() const;
 
-			void ChangePassword(const std::string &oldPassword, const std::string &newPassword);
+			virtual void ChangePassword(const std::string &oldPassword, const std::string &newPassword);
 
-			nlohmann::json GetBasicInfo() const;
+			virtual nlohmann::json GetBasicInfo() const;
 
-			SignType GetSignType() const;
+			virtual SignType GetSignType() const;
 
-			bool Readonly() const;
+			virtual bool Readonly() const;
 
-			bool SingleAddress() const;
+			virtual bool SingleAddress() const;
 
-			bool Equal(const Account &account) const;
+			virtual bool Equal(const Account &account) const;
 
-			int GetM() const;
+			virtual int GetM() const;
 
-			int GetN() const;
+			virtual int GetN() const;
 
-			const std::string &DerivationStrategy() const;
+			virtual const std::string &DerivationStrategy() const;
 
-			nlohmann::json GetPubKeyInfo() const;
+			virtual nlohmann::json GetPubKeyInfo() const;
 
-			HDKeychainPtr MultiSignSigner() const;
+			virtual HDKeychainPtr MultiSignSigner() const;
 
-			HDKeychainArray MultiSignCosigner() const;
+			virtual HDKeychainArray MultiSignCosigner() const;
 
-			int CosignerIndex() const;
+			virtual int CosignerIndex() const;
 
-			const std::vector<CoinInfoPtr> &SubWalletInfoList() const;
+			virtual const std::vector<CoinInfoPtr> &SubWalletInfoList() const;
 
-			void AddSubWalletInfoList(const CoinInfoPtr &info);
+			virtual void AddSubWalletInfoList(const CoinInfoPtr &info);
 
-			void SetSubWalletInfoList(const std::vector<CoinInfoPtr> &info);
+			virtual void SetSubWalletInfoList(const std::vector<CoinInfoPtr> &info);
 
-			void RemoveSubWalletInfo(const CoinInfoPtr &info);
+			virtual void RemoveSubWalletInfo(const CoinInfoPtr &info);
 
-			KeyStore ExportKeyStore(const std::string &payPasswd);
+			virtual KeyStore ExportKeyStore(const std::string &payPasswd);
 
-			nlohmann::json ExportReadonlyWallet() const;
+			virtual nlohmann::json ExportReadonlyWallet() const;
 
-			bool ImportReadonlyWallet(const nlohmann::json &walletJSON);
+			virtual bool ImportReadonlyWallet(const nlohmann::json &walletJSON);
 
-			std::string GetDecryptedMnemonic(const std::string &payPasswd) const;
+			virtual std::string GetDecryptedMnemonic(const std::string &payPasswd) const;
 
-			bool VerifyPrivateKey(const std::string &mnemonic, const std::string &passphrase) const;
+			virtual bool VerifyPrivateKey(const std::string &mnemonic, const std::string &passphrase) const;
 
-			bool VerifyPassPhrase(const std::string &passphrase, const std::string &payPasswd) const;
+			virtual bool VerifyPassPhrase(const std::string &passphrase, const std::string &payPasswd) const;
 
-			bool VerifyPayPassword(const std::string &payPasswd) const;
+			virtual bool VerifyPayPassword(const std::string &payPasswd) const;
 
-			void Save();
+			virtual void Save();
 
-			void Remove();
+			virtual void Remove();
 
-			const std::string &GetDataPath() const;
+			virtual const std::string &GetDataPath() const;
 
-			void RegenerateKey(const std::string &payPasswd) const;
+			virtual void RegenerateKey(const std::string &payPasswd) const;
+
 		private:
 			void Init() const;
 
@@ -141,7 +144,7 @@ namespace Elastos {
 
 		typedef boost::shared_ptr<Account> AccountPtr;
 
-	}
-}
+	} // namespace ElaWallet
+} // namespace Elastos
 
 #endif //__ELASTOS_SDK_ACCOUNT_H__

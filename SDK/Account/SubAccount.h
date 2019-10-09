@@ -15,53 +15,58 @@ namespace Elastos {
 	namespace ElaWallet {
 
 		class Transaction;
+
 		typedef boost::shared_ptr<Transaction> TransactionPtr;
 
 		class SubAccount {
 		public:
 			SubAccount(const AccountPtr &parent, uint32_t coinIndex);
 
-			nlohmann::json GetBasicInfo() const;
+			virtual nlohmann::json GetBasicInfo() const;
 
-			void Init(const std::vector<TransactionPtr> &tx, Lockable *lock);
+			virtual void Init(const std::vector<TransactionPtr> &tx, Lockable *lock);
 
-			bool IsSingleAddress() const;
+			virtual bool IsSingleAddress() const;
 
-			bool IsProducerDepositAddress(const Address &address) const;
+			virtual bool IsProducerDepositAddress(const Address &address) const;
 
-			bool IsOwnerAddress(const Address &address) const;
+			virtual bool IsOwnerAddress(const Address &address) const;
 
-			bool IsCRDepositAddress(const Address &address) const;
+			virtual bool IsCRDepositAddress(const Address &address) const;
 
-			void AddUsedAddrs(const Address &address);
+			virtual void AddUsedAddrs(const Address &address);
 
-			size_t GetAllAddresses(std::vector<Address> &addr, uint32_t start, size_t count, bool internal) const;
+			virtual size_t GetAllAddresses(std::vector<Address> &addr,
+										   uint32_t start,
+										   size_t count,
+										   bool internal) const;
 
-			std::vector<Address> UnusedAddresses(uint32_t gapLimit, bool internal);
+			virtual std::vector<Address> UnusedAddresses(uint32_t gapLimit, bool internal);
 
-			bool ContainsAddress(const Address &address) const;
+			virtual bool ContainsAddress(const Address &address) const;
 
-			void ClearUsedAddresses();
+			virtual void ClearUsedAddresses();
 
-			bytes_t OwnerPubKey() const;
+			virtual bytes_t OwnerPubKey() const;
 
-			bytes_t DIDPubKey() const;
+			virtual bytes_t DIDPubKey() const;
 
-			void SignTransaction(const TransactionPtr &tx, const std::string &payPasswd);
+			virtual void SignTransaction(const TransactionPtr &tx, const std::string &payPasswd);
 
-			Key DeriveOwnerKey(const std::string &payPasswd);
+			virtual Key DeriveOwnerKey(const std::string &payPasswd);
 
-			Key DeriveDIDKey(const std::string &payPasswd);
+			virtual Key DeriveDIDKey(const std::string &payPasswd);
 
-			bool FindKey(Key &key, const bytes_t &pubKey, const std::string &payPasswd);
+			virtual bool FindKey(Key &key, const bytes_t &pubKey, const std::string &payPasswd);
 
-			bool GetCodeAndPath(const Address &addr, bytes_t &code, std::string &path) const;
+			virtual bool GetCodeAndPath(const Address &addr, bytes_t &code, std::string &path) const;
 
-			size_t InternalChainIndex(const TransactionPtr &tx) const;
+			virtual size_t InternalChainIndex(const TransactionPtr &tx) const;
 
-			size_t ExternalChainIndex(const TransactionPtr &tx) const;
+			virtual size_t ExternalChainIndex(const TransactionPtr &tx) const;
 
-			const AccountPtr &Parent() const { return _parent; }
+			virtual const AccountPtr &Parent() const { return _parent; }
+
 		private:
 			uint32_t _coinIndex;
 			std::vector<Address> _internalChain, _externalChain;
@@ -74,7 +79,7 @@ namespace Elastos {
 
 		typedef boost::shared_ptr<SubAccount> SubAccountPtr;
 
-	}
-}
+	} // namespace ElaWallet
+} // namespace Elastos
 
 #endif //__ELASTOS_SDK_SUBACCOUNT_H__

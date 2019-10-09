@@ -5,121 +5,126 @@
 #ifndef __ELASTOS_SDK_SPVSERVICE_H__
 #define __ELASTOS_SDK_SPVSERVICE_H__
 
-#include "CoreSpvService.h"
 #include "BackgroundExecutor.h"
+#include "CoreSpvService.h"
 
-#include <SDK/Plugin/Transaction/Asset.h>
 #include <SDK/Database/DatabaseManager.h>
+#include <SDK/Plugin/Transaction/Asset.h>
 #include <SDK/WalletCore/KeyStore/KeyStore.h>
 
-#include <nlohmann/json.hpp>
-#include <boost/function.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/function.hpp>
+#include <nlohmann/json.hpp>
 #include <vector>
 
 namespace Elastos {
-	namespace ElaWallet {
+namespace ElaWallet {
 
-		class Transaction;
+class Transaction;
 
-		typedef boost::shared_ptr<Transaction> TransactionPtr;
+typedef boost::shared_ptr<Transaction> TransactionPtr;
 
-		class SpvService :
-				public CoreSpvService {
-		public:
+class SpvService : public CoreSpvService {
+public:
+  SpvService(const std::string &walletID, const SubAccountPtr &subAccount,
+             const boost::filesystem::path &dbPath, time_t earliestPeerTime,
+             uint32_t reconnectSeconds, const PluginType &pluginTypes,
+             const ChainParamsPtr &chainParams);
 
-			SpvService(const std::string &walletID,
-					   const SubAccountPtr &subAccount,
-					   const boost::filesystem::path &dbPath,
-					   time_t earliestPeerTime,
-					   uint32_t reconnectSeconds,
-					   const PluginType &pluginTypes,
-					   const ChainParamsPtr &chainParams);
+  virtual ~SpvService();
 
-			virtual ~SpvService();
+  void SyncStart();
 
-			void SyncStart();
+  void SyncStop();
 
-			void SyncStop();
+  void ExecutorStop();
 
-			void ExecutorStop();
+  TransactionPtr GetTransaction(const uint256 &hash);
 
-			size_t GetAllTransactionsCount();
+  size_t GetAllTransactionsCount();
 
-			void RegisterWalletListener(Wallet::Listener *listener);
+  void RegisterWalletListener(Wallet::Listener *listener);
 
-			void RegisterPeerManagerListener(PeerManager::Listener *listener);
+  void RegisterPeerManagerListener(PeerManager::Listener *listener);
 
-			void PublishTransaction(const TransactionPtr &tx);
+  void PublishTransaction(const TransactionPtr &tx);
 
-			void DatabaseFlush();
+  void DatabaseFlush();
 
-		public:
-			virtual void balanceChanged(const uint256 &asset, const BigInt &balance);
+public:
+  virtual void balanceChanged(const uint256 &asset, const BigInt &balance);
 
-			virtual void onCoinBaseTxAdded(const UTXOPtr &cb);
+  virtual void onCoinBaseTxAdded(const UTXOPtr &cb);
 
-			virtual void onCoinBaseUpdatedAll(const UTXOArray &cbs);
+  virtual void onCoinBaseUpdatedAll(const UTXOArray &cbs);
 
-			virtual void onCoinBaseTxUpdated(const std::vector<uint256> &hashes, uint32_t blockHeight, time_t timestamp);
+  virtual void onCoinBaseTxUpdated(const std::vector<uint256> &hashes,
+                                   uint32_t blockHeight, time_t timestamp);
 
-			virtual void onCoinBaseSpent(const std::vector<uint256> &spentHashes);
+  virtual void onCoinBaseSpent(const std::vector<uint256> &spentHashes);
 
-			virtual void onCoinBaseTxDeleted(const uint256 &hash, bool notifyUser, bool recommendRescan);
+  virtual void onCoinBaseTxDeleted(const uint256 &hash, bool notifyUser,
+                                   bool recommendRescan);
 
-			virtual void onTxAdded(const TransactionPtr &tx);
+  virtual void onTxAdded(const TransactionPtr &tx);
 
-			virtual void onTxUpdated(const std::vector<uint256> &hashes, uint32_t blockHeight, time_t timeStamp);
+  virtual void onTxUpdated(const std::vector<uint256> &hashes,
+                           uint32_t blockHeight, time_t timeStamp);
 
-			virtual void onTxDeleted(const uint256 &hash, bool notifyUser, bool recommendRescan);
+  virtual void onTxDeleted(const uint256 &hash, bool notifyUser,
+                           bool recommendRescan);
 
-			virtual void onTxUpdatedAll(const std::vector<TransactionPtr> &txns);
+  virtual void onTxUpdatedAll(const std::vector<TransactionPtr> &txns);
 
-			virtual void onAssetRegistered(const AssetPtr &asset, uint64_t amount, const uint168 &controller);
+  virtual void onAssetRegistered(const AssetPtr &asset, uint64_t amount,
+                                 const uint168 &controller);
 
-		public:
-			virtual void syncStarted();
+public:
+  virtual void syncStarted();
 
-			virtual void syncProgress(uint32_t currentHeight, uint32_t estimatedHeight, time_t lastBlockTime);
+  virtual void syncProgress(uint32_t currentHeight, uint32_t estimatedHeight,
+                            time_t lastBlockTime);
 
-			virtual void syncStopped(const std::string &error);
+  virtual void syncStopped(const std::string &error);
 
-			virtual void txStatusUpdate();
+  virtual void txStatusUpdate();
 
-			virtual void saveBlocks(bool replace, const std::vector<MerkleBlockPtr> &blocks);
+  virtual void saveBlocks(bool replace,
+                          const std::vector<MerkleBlockPtr> &blocks);
 
-			virtual void savePeers(bool replace, const std::vector<PeerInfo> &peers);
+  virtual void savePeers(bool replace, const std::vector<PeerInfo> &peers);
 
-			virtual bool networkIsReachable();
+  virtual bool networkIsReachable();
 
-			virtual void txPublished(const std::string &hash, const nlohmann::json &result);
+  virtual void txPublished(const std::string &hash,
+                           const nlohmann::json &result);
 
-			virtual void connectStatusChanged(const std::string &status);
+  virtual void connectStatusChanged(const std::string &status);
 
-		protected:
-			virtual std::vector<UTXOPtr> loadCoinBaseUTXOs();
+protected:
+  virtual std::vector<UTXOPtr> loadCoinBaseUTXOs();
 
-			virtual std::vector<TransactionPtr> loadTransactions();
+  virtual std::vector<TransactionPtr> loadTransactions();
 
-			virtual std::vector<MerkleBlockPtr> loadBlocks();
+  virtual std::vector<MerkleBlockPtr> loadBlocks();
 
-			virtual std::vector<PeerInfo> loadPeers();
+  virtual std::vector<PeerInfo> loadPeers();
 
-			virtual std::vector<AssetPtr> loadAssets();
+  virtual std::vector<AssetPtr> loadAssets();
 
-			virtual const PeerManagerListenerPtr &createPeerManagerListener();
+  virtual const PeerManagerListenerPtr &createPeerManagerListener();
 
-			virtual const WalletListenerPtr &createWalletListener();
+  virtual const WalletListenerPtr &createWalletListener();
 
-		private:
-			DatabaseManager _databaseManager;
-			BackgroundExecutor _executor;
+private:
+  DatabaseManager _databaseManager;
+  BackgroundExecutor _executor;
 
-			std::vector<Wallet::Listener *> _walletListeners;
-			std::vector<PeerManager::Listener *> _peerManagerListeners;
-		};
+  std::vector<Wallet::Listener *> _walletListeners;
+  std::vector<PeerManager::Listener *> _peerManagerListeners;
+};
 
-	}
-}
+} // namespace ElaWallet
+} // namespace Elastos
 
 #endif //__ELASTOS_SDK_SPVSERVICE_H__
